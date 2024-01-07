@@ -1,15 +1,15 @@
 {
     "manifest_version": 3,
-    "name": "HTML Table Converter",
+    "name": "Table to CSV",
     "version": "1.0",
-    "description": "Convert HTML table to JSON",
+    "description": "Converts tables on any webpage to CSV or JSON",
     "icons": {
       "48": "icon.png"
     },
     "permissions": ["activeTab"],
     "action": {
       "default_icon": "icon.png",
-      "default_title": "Convert HTML Table",
+      "default_title": "Convert Table",
       "default_popup": "popup.html"
     },
     "content_scripts": [
