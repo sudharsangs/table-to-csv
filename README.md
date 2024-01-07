@@ -29,7 +29,7 @@ The Table to CSV Chrome Extension is a tool that simplifies the process of conve
    - Click on the extension icon in the Chrome toolbar.
    - Select "Start Table Selection" from the menu.
    - Click on the HTML table you want to convert.
-   - Choose between "Download CSV" or "Download JSON" options.
+   - Choose between the "Download CSV" or "Download JSON" options.
 
 3. **Download CSV:**
    - Click on "Download CSV" to convert the selected table into a CSV file.
@@ -43,6 +43,5 @@ The Table to CSV Chrome Extension is a tool that simplifies the process of conve
 
 - This project is written in TypeScript.
 - The main logic is split into content.ts, popup.ts, and background.ts.
-- Styles are applied using basic CSS for a clean user interface.
 
 
