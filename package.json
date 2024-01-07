@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "tsc && npm run copy-files",
+    "copy-files": "copyfiles manifest.json popup.html icon.png dist"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.256"
+  }
+}
