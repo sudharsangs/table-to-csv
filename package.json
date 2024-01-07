@@ -4,6 +4,8 @@
     "copy-files": "copyfiles manifest.json popup.html icon.png dist"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.256"
+    "@types/chrome": "^0.0.256",
+    "@types/firefox-webext-browser": "^120.0.0",
+    "copyfiles": "^2.4.1"
   }
 }

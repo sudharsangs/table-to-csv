@@ -2,20 +2,45 @@ let selectingTable = false;
 let selectedTable: HTMLTableElement | null = null;
 let overlayDiv: HTMLDivElement | null = null;
 
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.action === 'startTableSelection') {
+function sendMessageToBackground(message: any) {
+    if (chrome && chrome.runtime) {
+        chrome.runtime.sendMessage(message);
+    } else if (browser && browser.runtime) {
+        browser.runtime.sendMessage(message);
+    } else {
+        console.error("Cannot send message to background script. Browser extension APIs not available.");
+    }
+}
+if (chrome.runtime) {
+    chrome.runtime.onMessage.addListener(
+        function (request, sender, sendResponse) {
+            if (request.action === 'startTableSelection') {
+                console.info('Please click on the table you want to convert.');
+                startTableSelection();
+            } else if (request.action === 'downloadCsv') {
+                if (!selectedTable) {
+                    alert('No table selected. Please select a table first.');
+                } else {
+                    downloadCsv();
+                }
+            }
+        }
+    );
+
+} else if (browser.runtime) {
+    browser.runtime.onMessage.addListener((message, sender) => {
+        if (message.action === 'startTableSelection') {
             console.info('Please click on the table you want to convert.');
             startTableSelection();
-        } else if (request.action === 'downloadCsv') {
+        } else if (message.action === 'downloadCsv') {
             if (!selectedTable) {
                 alert('No table selected. Please select a table first.');
             } else {
                 downloadCsv();
             }
         }
-    }
-);
+    });
+}
 
 
 
@@ -53,7 +78,7 @@ function handleMouseMove(event: MouseEvent) {
             applyCustomStyles(selectedTable);
 
 
-            chrome.runtime.sendMessage({ action: 'tableSelected' });
+            sendMessageToBackground({ action: 'tableSelected' });
         }
     }
 }
