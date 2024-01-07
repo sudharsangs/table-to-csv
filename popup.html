@@ -1,32 +1,41 @@
 <!-- popup.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HTML Table Converter</title>
     <style>
+        /* Button styles */
         button {
-            background-color: #4285f4;
-            color: #ffffff;
-            padding: 10px 20px;
-            border: none;
+            background-color: #0065A1;
+            border: 1px solid #0065A1;
+            color: #fff;
+            width: auto;
             border-radius: 5px;
-            cursor: pointer;
         }
+
+        /* Disabled button styles */
         button[disabled] {
             background-color: #dddddd;
             color: #777777;
             cursor: not-allowed;
         }
+
+        /* Highlight the button on hover */
         button:hover {
-            background-color: #3367d6;
-            border: none;
+            background-color: #0065A1;
+            border: 1px solid #0065A1;
+            color: #fff;
         }
     </style>
 </head>
 
 <body>
-    <button id="selectTableButton">Select Table To Download as CSV</button>
+    <button id="selectTableButton">Select Table</button>
+
     <script src="popup.js"></script>
 </body>
 

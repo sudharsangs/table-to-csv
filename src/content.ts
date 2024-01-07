@@ -1,15 +1,23 @@
 let selectingTable = false;
 let selectedTable: HTMLTableElement | null = null;
+let overlayDiv: HTMLDivElement | null = null;
 
 chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-        console.log(request.action,"6")
+    function (request, sender, sendResponse) {
         if (request.action === 'startTableSelection') {
             console.info('Please click on the table you want to convert.');
             startTableSelection();
-        } 
+        } else if (request.action === 'downloadCsv') {
+            if (!selectedTable) {
+                alert('No table selected. Please select a table first.');
+            } else {
+                downloadCsv();
+            }
+        }
     }
 );
+
+
 
 function startTableSelection() {
     selectingTable = true;
@@ -42,7 +50,8 @@ function handleMouseMove(event: MouseEvent) {
             selectedTable = table;
             selectedTable.classList.add('html-table-converter-selected');
 
-            applyCustomStyles(selectedTable); 
+            applyCustomStyles(selectedTable);
+
 
             chrome.runtime.sendMessage({ action: 'tableSelected' });
         }
@@ -53,8 +62,76 @@ function handleTableClick(event: MouseEvent) {
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('click', handleTableClick);
     selectingTable = false;
-    downloadCsv()
+    showOverlay();
 }
+
+const buttonStyles = {
+    backgroundColor: "#0065A1",
+    border: "1px solid #0065A1",
+    color: "#fff",
+    width: "auto",
+    padding: "12px",
+    borderRadius: "21px"
+}
+
+
+function showOverlay() {
+    if (!overlayDiv) {
+        overlayDiv = document.createElement('div');
+        overlayDiv.id = "extension"
+        overlayDiv.style.position = 'absolute';
+        overlayDiv.style.display = "flex";
+        overlayDiv.style.alignItems = "center";
+        overlayDiv.style.justifyContent = "center";
+        overlayDiv.style.top = '50%';
+        overlayDiv.style.right = '50%';
+        overlayDiv.style.width = 'auto';
+        overlayDiv.style.height = 'auto';
+        overlayDiv.style.background = 'rgba(0,0,0,0.9)';
+        overlayDiv.style.borderRadius = '5px';
+        overlayDiv.style.padding = '12px'
+        overlayDiv.style.zIndex = '9999';
+
+        const downloadButton = document.createElement('button');
+        downloadButton.id = 'downloadCsvButton';
+        for (const property in buttonStyles) {
+            if (buttonStyles.hasOwnProperty(property)) {
+                (downloadButton.style as any)[property] = (buttonStyles as any)[property];
+            }
+        }
+        downloadButton.style.marginRight = '10px'
+        downloadButton.addEventListener('click', downloadCsv);
+        downloadButton.innerText = "Download CSV"
+        overlayDiv.appendChild(downloadButton);
+
+        const downloadJsonButton = document.createElement('button');
+        downloadJsonButton.id = 'downloadJsonButton';
+        downloadJsonButton.innerText = "Download JSON"
+        downloadJsonButton.addEventListener('click', downloadJson)
+        for (const property in buttonStyles) {
+            if (buttonStyles.hasOwnProperty(property)) {
+                (downloadJsonButton.style as any)[property] = (buttonStyles as any)[property];
+            }
+        }
+        overlayDiv.appendChild(downloadJsonButton);
+        selectedTable!.style.position = "relative"
+        document.body.appendChild(overlayDiv);
+        document.addEventListener('click', function (event) {
+            if (!overlayDiv!.contains(event.target as Node)) {
+                closeOverlay();
+            }
+        });
+    } else {
+        overlayDiv.style.display = 'block';
+    }
+}
+
+function closeOverlay() {
+    if (overlayDiv) {
+        overlayDiv.style.display = 'none';
+    }
+}
+
 
 function downloadCsv() {
     if (!selectedTable) {
@@ -87,7 +164,7 @@ function downloadCsv() {
 
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'table_data.csv';
+    a.download = `${document.title}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -95,6 +172,44 @@ function downloadCsv() {
     URL.revokeObjectURL(a.href);
     removeCustomStyles(selectedTable);
 }
+
+function downloadJson() {
+    if (!selectedTable) {
+        console.error('No table selected. Please select a table first.');
+        return;
+    }
+
+    const data: any[] = [];
+    const headerRow = selectedTable!.rows[0];
+
+    for (let rowIndex = 1; rowIndex < selectedTable!.rows.length; rowIndex++) {
+        const row = selectedTable!.rows[rowIndex];
+        const rowData: { [key: string]: string } = {};
+
+        for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+            const headerText = headerRow.cells[cellIndex].textContent!.trim();
+            const cellText = row.cells[cellIndex].textContent!.trim();
+            rowData[headerText] = cellText;
+        }
+
+        data.push(rowData);
+    }
+
+    const jsonContent = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${document.title}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(a.href);
+    removeCustomStyles(selectedTable);
+}
+
+
 
 
 
