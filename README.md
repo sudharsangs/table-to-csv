@@ -1,5 +1,8 @@
 
 # Table to CSV
+<a href="https://addons.mozilla.org/en-US/firefox/addon/table-to-csv" target="_blank">
+    <img src="https://blog.mozilla.org/addons/files/2020/04/get-the-addon-fx-apr-2020.svg" 
+    height="100" alt="alt text"></a>
 
 ## Overview
 
